@@ -95,7 +95,7 @@ def show_comic_text(screen, msg, pos=(0, 0)):
     @param msg string: string to be displayed.
     @param pos tuple: x,y position.
     """
-    font = pygame.font.SysFont("comicsansms", 72)
+    font = pygame.font.SysFont("comicsansms", 50)
     text = font.render(msg, True, colors.ORANGE)
     screen.blit(text, pos)
     pygame.display.flip()
@@ -112,6 +112,28 @@ screen = get_screen()
 pygame.display.set_caption("Go Fast!!")
 app_icon = pygame.image.load(os.path.join("assets", "images", "app_icon.png"))
 pygame.display.set_icon(app_icon)
+
+
+def pause():
+    global RUNNING, PAUSED, SCORE
+    RUNNING = False
+    PAUSED = True
+
+    while PAUSED:
+        screen.fill(colors.WHITE)
+
+        event = pygame.event.poll()
+        show_comic_text(screen, "Press Enter to continue. you scored {}".format(SCORE))
+
+        if event.type == pygame.QUIT:
+            RUNNING = False
+        else:
+            if event.type == pygame.KEYUP and event.key == pygame.K_RETURN:
+                PAUSED = False
+                RUNNING = True
+                gameloop()
+        pygame.display.update()
+        clock.tick(60)
 
 def gameloop():
     global RUNNING, PAUSED, SCORE
@@ -139,9 +161,11 @@ def gameloop():
         if event.type == pygame.QUIT:
             RUNNING = False
         else:
+            carnewpos = car.pos
             if event.type == pygame.KEYUP:
-                carnewpos = car.pos
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_ESCAPE:
+                    pause()
+                elif event.key == pygame.K_LEFT:
                     carnewpos[0] -= car.accel
                 elif event.key == pygame.K_RIGHT:
                     carnewpos[0] += car.accel
@@ -149,6 +173,7 @@ def gameloop():
                     carnewpos[1] -= car.accel
                 elif event.key == pygame.K_DOWN:
                     carnewpos[1] += car.accel
+                
                 car.set_pos(carnewpos)
 
             car.show_me(screen)
