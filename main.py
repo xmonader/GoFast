@@ -158,6 +158,8 @@ def gameloop():
                 show_comic_text(screen, "Game over!! you scored {}".format(SCORE))
                 RUNNING = False
                 time.sleep(1)
+                SCORE = 0 
+                gameloop()
             else:
                 show_comic_text(screen, "Score: {}".format(SCORE))
             pygame.display.update()
